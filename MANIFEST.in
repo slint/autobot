@@ -1,0 +1,19 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of Autobot.
+# Copyright (C) 2015-2019 CERN.
+#
+# Autobot is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+
+include AUTHORS.rst
+include CONTRIBUTING.rst
+include HISTORY.rst
+include LICENSE
+include README.rst
+
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+
+recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif

@@ -7,8 +7,9 @@
 # Autobot is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-pydocstyle invenio_search tests docs && \
+black --check . && \
 isort -rc -c -df && \
 check-manifest --ignore ".travis-*" && \
+pydocstyle invenio_search tests docs && \
 sphinx-build -qnNW docs docs/_build/html && \
 python setup.py test

@@ -7,22 +7,43 @@
 # Autobot is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
+notifications:
+  email: false
+
 language: python
-python:
-  - 3.7
-  - 3.6
-  - 3.5
 
-# Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -e .
+python: 3.7
 
-# Command to run tests, e.g. python setup.py test
-script: run-tests.sh
+cache:
+  pip
 
-# Assuming you have installed the travis-ci CLI tool, after you
-# create the Github repo and add it to Travis, run the
-# following command to finish PyPI deployment setup:
-# $ travis encrypt --add deploy.password
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: REQUIREMENTS=dev
+
+env:
+  - REQUIREMENTS=lowest
+  - REQUIREMENTS=release
+  - REQUIREMENTS=devel
+
+
+before_install:
+  - "travis_retry pip install --upgrade pip setuptools py"
+  - "travis_retry pip install twine wheel coveralls requirements-builder black"
+  - "requirements-builder -e all --level=min setup.py > .travis-lowest-requirements.txt"
+  - "requirements-builder -e all --level=pypi setup.py > .travis-release-requirements.txt"
+  - "requirements-builder -e all --level=dev --req requirements-devel.txt setup.py > .travis-devel-requirements.txt"
+
+install:
+  - "travis_retry pip install -r .travis-${REQUIREMENTS}-requirements.txt"
+  - "travis_retry pip install -e .[all]"
+
+script: ./run-tests.sh
+
+after_success:
+  - coveralls
+
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
